@@ -10,10 +10,10 @@
 library(shiny)
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(
+ui <- fluidPage(theme = "bootstrap.min.css",
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Student Performance"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
