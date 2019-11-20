@@ -1,4 +1,4 @@
 # Student_Performance-Shiny
 Projeto Final - DS871
 
-Regressão Linear
+Correlação e Regressão Linear
