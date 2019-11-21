@@ -40,24 +40,22 @@ server <- function(input, output) {
     d1=read.table("student-mat.csv",sep=";",header=TRUE)
     
     d2=read.table("student-por.csv",sep=";",header=TRUE)
-    
-    
+
     d3=merge(d1,d2,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
-    print(nrow(d3)) # 382 students
     
     #M <- cor(d3)
     #corrplot(M, type="upper", order="hclust", col=brewer.pal(n=8, name="RdYlBu"))
 
-    view(d3)
+    View(d3)
     summary(d3)
     
     sapply(d3,is.numeric)
     
     d3numeric <- d3[,sapply(d3, is.numeric)]
-  #  View(d1numeric)
     matriz_cor <- cor(d3numeric)
     corrplot (matriz_cor, method="ellipse")
-
+    View(matriz_cor)
+    
     output$distPlot <- renderPlot({
         # generate bins based on input$bins from ui.R
         x    <- faithful[, 2]
