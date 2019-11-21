@@ -13,26 +13,24 @@ library(corrplot)
 library(RColorBrewer)
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(theme = "bootstrap.min.css",
-                
-                # Application title
-                titlePanel("Student Performance"),
-                
-                # Sidebar with a slider input for number of bins 
-                sidebarLayout(
-                    sidebarPanel(
-                        sliderInput("bins",
-                                    "Number of bins:",
-                                    min = 1,
-                                    max = 50,
-                                    value = 30)
-                    ),
-                    
-                    # Show a plot of the generated distribution
-                    mainPanel(
-                        plotOutput("distPlot")
-                    )
-                )
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("Student Performance"),
+               
+    # layout
+
+    inputPanel(
+        selectInput("student", "Choose a correlation:",
+            choices = list("Student Mat" = 1, "Student Por" = 2, "Student Merge" = 3),
+            selected = 1
+            )  
+    ),
+    hr(),
+    # Show a plot of the correlations
+    mainPanel(
+        plotOutput("corrPlot")
+    )
 )
 
 # Define server logic required to draw a histogram
@@ -43,20 +41,42 @@ server <- function(input, output) {
     
     d3=merge(d1,d2,by=c("school","sex","age","address","famsize","Pstatus","Medu","Fedu","Mjob","Fjob","reason","nursery","internet"))
     
-    #M <- cor(d3)
-    #corrplot(M, type="upper", order="hclust", col=brewer.pal(n=8, name="RdYlBu"))
+    #View(d3)
+    summary(d1)
     
-    #View(d1)
+    summary(d2)
+    
     summary(d3)
+    
+    sapply(d1,is.numeric)
+    
+    sapply(d2,is.numeric)
     
     sapply(d3,is.numeric)
     
-    d3numeric <- d3[,sapply(d3, is.numeric)]
+    d1numeric <- d1[, sapply(d1, is.numeric)]
 
-    output$distPlot <- renderPlot({
-        matriz_cor <- cor(d3numeric)
-        corrplot(matriz_cor, method="ellipse")
-        View(matriz_cor, type="upper", order="hclust", col=brewer.pal(n=8, name="RdYlBu"))
+    d2numeric <- d2[, sapply(d2, is.numeric)]
+    
+    d3numeric <- d3[, sapply(d3, is.numeric)]
+    
+    output$corrPlot <- renderPlot({
+        
+        if (input$student == 1) {
+            matriz_cor1 <- cor(d1numeric)
+            corrplot(matriz_cor1, method="color")
+            #View(matriz_cor)
+        }
+        else if (input$student == 2) {
+            matriz_cor2 <- cor(d2numeric)
+            corrplot(matriz_cor2, method="color")
+            #View(matriz_cor) 
+        }
+        else {
+            matriz_cor3 <- cor(d3numeric)
+            corrplot(matriz_cor3, method="color")
+            #View(matriz_cor)
+        }
     })
 }
 
