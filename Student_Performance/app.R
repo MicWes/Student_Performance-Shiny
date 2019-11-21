@@ -8,28 +8,37 @@
 #
 
 library(shiny)
+library(shinyjs)
 library(datasets)
 library(corrplot)
 library(RColorBrewer)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
+    useShinyjs(),
     # Application title
     titlePanel("Student Performance"),
                
     # layout
 
-    inputPanel(
-        selectInput("student", "Choose a correlation:",
-            choices = list("Student Mat" = 1, "Student Por" = 2, "Student Merge" = 3),
-            selected = 1
-            )  
-    ),
+    
     hr(),
     # Show a plot of the correlations
     mainPanel(
-        plotOutput("corrPlot")
+        inputPanel(
+            selectInput("student", "Choose Course Correlation:",
+                        choices = list("Math" = 1, "Portuguese" = 2, "Merge (Math+Portuguese)" = 3),
+                        selected = 1
+            )  
+        ),
+        plotOutput("corrPlot"),
+        hr(),
+        actionButton("button", "Description"),
+        hidden(
+            div(id='text_div',
+                verbatimTextOutput("text")
+            )
+        )
     )
 )
 
@@ -77,6 +86,31 @@ server <- function(input, output) {
             corrplot(matriz_cor3, method="color")
             #View(matriz_cor)
         }
+    })
+    
+    observeEvent(input$button, {
+        toggle('text_div')
+        output$text <- renderText({"Attribute Information:
+# Attributes for both student-mat.csv (Math course) and student-por.csv (Portuguese language course) datasets:
+age - student's age (numeric: from 15 to 22)
+Medu - mother's education (numeric: 0 - none, 1 - primary education (4th grade), 2 â€“ 5th to 9th grade, 3 â€“ secondary education or 4 â€“ higher education)
+Fedu - father's education (numeric: 0 - none, 1 - primary education (4th grade), 2 â€“ 5th to 9th grade, 3 â€“ secondary education or 4 â€“ higher education)
+traveltime - home to school travel time (numeric: 1 - <15 min., 2 - 15 to 30 min., 3 - 30 min. to 1 hour, or 4 - >1 hour)
+studytime - weekly study time (numeric: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, or 4 - >10 hours)
+failures - number of past class failures (numeric: n if 1<=n<3, else 4)
+famsup - family educational support (binary: yes or no)
+freetime - free time after school (numeric: from 1 - very low to 5 - very high)
+goout - going out with friends (numeric: from 1 - very low to 5 - very high)
+Dalc - workday alcohol consumption (numeric: from 1 - very low to 5 - very high)
+Walc - weekend alcohol consumption (numeric: from 1 - very low to 5 - very high)
+health - current health status (numeric: from 1 - very bad to 5 - very good)
+absences - number of school absences (numeric: from 0 to 93)
+
+# these grades are related with the course subject, Math or Portuguese:
+G1 - first period grade (numeric: from 0 to 20)
+G2 - second period grade (numeric: from 0 to 20)
+G3 - final grade (numeric: from 0 to 20, output target)
+"})
     })
 }
 
