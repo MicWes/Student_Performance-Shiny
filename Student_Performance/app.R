@@ -12,34 +12,43 @@ library(shinyjs)
 library(datasets)
 library(corrplot)
 library(RColorBrewer)
+library(shinythemes)
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(
+ui <- fluidPage(theme = shinytheme("spacelab"),
     useShinyjs(),
-    # Application title
-    titlePanel("Student Performance"),
-               
-    # layout
-
+    titlePanel(h2("Student Performance", style='margin-left:12.5px')),
     
+    # layout
     hr(),
-    # Show a plot of the correlations
     mainPanel(
+        # Application title
+        
         inputPanel(
             selectInput("student", "Choose Course Correlation:",
                         choices = list("Math" = 1, "Portuguese" = 2, "Merge (Math+Portuguese)" = 3),
                         selected = 1
             )  
         ),
+        #Show a plot of the correlations
         plotOutput("corrPlot"),
-        hr(),
-        actionButton("button", "Description"),
-        hidden(
-            div(id='text_div',
-                verbatimTextOutput("text")
-            )
+        hr()
+    ),
+    br(),br(),br(), #space
+    actionButton("button", "Description"),
+    hidden(
+        div(id='text_div',
+            verbatimTextOutput("text")
         )
-    )
+    ),
+    tags$footer("Download Dataset: ", a("http://archive.ics.uci.edu/ml/datasets/Student+Performance", href="http://archive.ics.uci.edu/ml/datasets/Student+Performance"), style = "
+              position:absolute;
+              bottom:0;
+              width:90%;
+              height:50px;
+              padding: 10px;
+              background-color: white;
+              z-index: 0;")
 )
 
 # Define server logic required to draw a histogram
@@ -73,17 +82,18 @@ server <- function(input, output) {
         
         if (input$student == 1) {
             matriz_cor1 <- cor(d1numeric)
-            corrplot(matriz_cor1, method="color")
+            corrplot(matriz_cor1, method="color", order="hclust", tl.col="black")
             #View(matriz_cor)
         }
         else if (input$student == 2) {
             matriz_cor2 <- cor(d2numeric)
-            corrplot(matriz_cor2, method="color")
+            corrplot(matriz_cor2, method="color", order="hclust", tl.col="black")
             #View(matriz_cor) 
         }
         else {
             matriz_cor3 <- cor(d3numeric)
-            corrplot(matriz_cor3, method="color")
+            corrplot(matriz_cor3, method="color", order="hclust", tl.col="black",
+                     col=brewer.pal(n=8, name="PuOr"))
             #View(matriz_cor)
         }
     })
@@ -113,7 +123,6 @@ G3 - final grade (numeric: from 0 to 20, output target)
 "})
     })
 }
-
 
 # Run the application 
 shinyApp(ui = ui, server = server)
